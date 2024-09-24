@@ -14,7 +14,16 @@ openssl req -key ca.key -new -x509 -days 365 -addext keyUsage=critical,keyCertSi
 openssl genpkey -algorithm ec -pkeyopt ec_paramgen_curve:P-256 -out server.key
 
 # Server csr
+openssl req -key server.key -config ../server.conf -new -out server.csr
 
+# Server cert
+openssl x509 -req -in server.csr -CA ca.cert -CAkey ca.key -CAcreateserial -days 365 -extfile ../openssl.conf -extensions server-cert -out server.cert
 
+# Client key
+openssl genpkey -algorithm ec -pkeyopt ec_paramgen_curve:P-256 -out client.key
 
-openssl x509 -req -in client.csr -CA ca.cert -CAkey ca.key -CAcreateserial -days 90 -extfile ../openssl.conf -extensions client.cert -out client.cert
+# Client csr
+openssl req -key client.key -config ../client.conf -new -out client.csr
+
+# Client cert
+openssl x509 -req -in client.csr -CA ca.cert -CAkey ca.key -CAcreateserial -days 365 -extfile ../openssl.conf -extensions client-cert -out client.cert
