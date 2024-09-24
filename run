@@ -1,0 +1,20 @@
+#!/bin/sh
+set -x
+mkdir -p cert
+cd cert
+
+# CA key
+openssl genpkey -algorithm ec -pkeyopt ec_paramgen_curve:P-256 -out ca.key
+chmod 600 ca.key
+
+# CA cert
+openssl req -key ca.key -new -x509 -days 365 -addext keyUsage=critical,keyCertSign,cRLSign -subj "/CN=<Example CA>" -out ca.cert
+
+# Server key
+openssl genpkey -algorithm ec -pkeyopt ec_paramgen_curve:P-256 -out server.key
+
+# Server csr
+
+
+
+openssl x509 -req -in client.csr -CA ca.cert -CAkey ca.key -CAcreateserial -days 90 -extfile ../openssl.conf -extensions client.cert -out client.cert
